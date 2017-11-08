@@ -118,8 +118,30 @@ class Seamless {
     }
   }
 
+  // src can be array or regexp
+  // target is the target
+  matchTarget (src, target) {
+    if (typeof (src) === 'string') {
+      if (src === target) {
+        return true
+      }
+      if (target.match(src)) {
+        return true
+      }
+      return false
+    } else if (typeof (src) === 'object') {
+      for (var i = 0; i < src.length; i++) {
+        if (this.matchTarget(src[i], target)) {
+          return true
+        }
+      }
+      return false
+    }
+    return false
+  }
+
   rcvMessage (ev) {
-    if (this.params.acceptFrom !== ev.origin && window.location.protocol + '//' + window.location.host !== ev.origin) {
+    if (!(this.matchTarget(this.params.acceptFrom, ev.origin) || this.matchTarget(window.location.protocol + '//' + window.location.host, ev.origin))) {
       return
     }
     if (ev.data.type === 'debug') {
@@ -128,6 +150,7 @@ class Seamless {
     }
     if (this.parent) {
       if (ev.data.type === 'init') {
+        this.inited = true
         this.params.onInit ? this.params.onInit() : null  // eslint-disable-line no-unused-expressions
         this.sendMessage({type: 'init'})
         this.sendMessage({type: 'resize'})
