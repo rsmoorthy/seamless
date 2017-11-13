@@ -164,6 +164,9 @@ class Seamless {
       if (ev.data.type === 'scrollTo') {
         this.childElement.scrollIntoView({behavior: 'smooth', block: 'auto'})
       }
+      if (ev.data.type === 'redirect' && ev.data.url) {
+        window.location.href = ev.data.url
+      }
     }
     if (this.child) {
       if (ev.data.type === 'resize' || ev.data.type === 'getsize') {
