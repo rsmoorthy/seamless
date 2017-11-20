@@ -55,6 +55,17 @@ class Seamless {
       if (ele && ele.contentWindow) {
         this.childWindow = ele.contentWindow
         this.childElement = ele
+        // If data-src is present, then we use that and set the src of iframe
+        if (ele.getAttribute('data-src')) {
+          ele.onload = () => this.sendMessage({type: 'init'})
+          var params = ele.getAttribute('data-params') ? ele.getAttribute('data-params') : ''
+          var urlparams = ele.getAttribute('data-copyurlparams') ? window.location.search.substring(1) : ''
+          params += ((params.length && urlparams.length) ? '&' : '') + urlparams
+
+          var src = ele.getAttribute('data-src')
+          src += params.length ? (((src.match(/\?/)) ? '&' : '?') + params) : ''
+          ele.src = src
+        }
       }
       this.sendMessage({type: 'init'})
     }

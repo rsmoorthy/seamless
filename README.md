@@ -1,5 +1,15 @@
 # seamless
-Seamless interaction with iframes
+Seamless interaction with iframes. This requires mutual co-operation between the parent and child.
+
+What this tool provides:
+
+* Resize iframe window dynamically
+* Show Alerts on top of the window (not within the iframe)
+* Any redirects within the iframe can be exposed outside, so that the main window can get redirected
+* Any scrollTo from the iframe can be passed to the parent, so it can happen properly
+
+This is achieved by sending messages between the windows, where in most cases the iframe (child) sends request to
+the parent to do some action (resize, redirect etc)
 
 ## Steps to setup Seamless in the Top Window AND Iframe Pages
 
@@ -27,7 +37,10 @@ Seamless interaction with iframes
 ```
 <script type="text/javascript">
   $(function() {
-    var seamless = new Seamless({acceptFrom:'https://iframe.host.name'});
+    var seamless = new Seamless({
+      acceptFrom:'https://iframe.host.name',
+      childElement: '#iframe'     (optional)
+    });
   });
 </script>
 ```
@@ -40,7 +53,22 @@ Seamless interaction with iframes
   scrolling="no" style="overflow: hidden; border: none; height: 80%; width: 100%"/>
 ```
 
-## Steps to setup Seamless within the iframe
+  - The URL can be passed to the iframe normally using `src` attribute.
+  - If you wish to pass url parameters to iframe, seamless can help you and this is how you can do it.
+
+```
+<iframe
+  id="iframe"
+  data-src="https://www.host.name/"
+  data-params="a=b&x=y"
+  data-copyUrlParams="1"
+  scrolling="no" style="overflow: hidden; border: none; height: 80%; width: 100%"/>
+```
+  - `data-src` indicates the URL of the iframe (with or without addl parameters)
+  - `data-params` (optional)-- URL parameters in the form of key=value.. EXCEPT the leading `?`
+  - `data-copyUrlParams` (optional) -- If this is present, then passes all parent's url parameters to the iframe as well
+
+## Steps to setup Seamless within the iframe  (Child)
 
 * Include the following script in your html page, at the bottom
 
@@ -70,3 +98,5 @@ Seamless interaction with iframes
 
 * `onInit` - A callback function when the seamless initializations have been complete, and seamless has successfully exchanged init
 messages from the parent/child.
+
+* `childElement` - Only Applicable for Parent. Specify the querySelector value for the iFrame element. If not specified, the first iframe will be taken.
