@@ -50,8 +50,9 @@ class Seamless {
         return
       }
       window.addEventListener('resize', this.throttle, false)
-      let ele = this.params.childElement ? this.params.childEement : 'iframe'
+      let ele = this.params.childElement ? this.params.childElement : 'iframe'
       ele = document.querySelector(ele)
+      console.log('seamless - identified iframe element', ele)
       if (ele && ele.contentWindow) {
         this.childWindow = ele.contentWindow
         this.childElement = ele
